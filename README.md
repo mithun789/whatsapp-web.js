@@ -67,6 +67,46 @@ client.initialize();
 Take a look at [example.js][examples] for another examples with additional use cases.  
 For further details on saving and restoring sessions, explore the provided [Authentication Strategies][auth-strategies].
 
+## Phone Number Pairing (No QR Code)
+
+You can authenticate without scanning a QR code by using phone number pairing. This method generates a pairing code that you enter in the WhatsApp app.
+
+```js
+const { Client, LocalAuth } = require('whatsapp-web.js');
+
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    pairWithPhoneNumber: {
+        // Format: COUNTRYCODE + PHONENUMBER (no + or spaces)
+        // Examples: US=12025551234, UK=447911123456, India=919876543210
+        phoneNumber: '12025551234',
+        showNotification: true,
+        intervalMs: 180000  // Code refresh interval (3 minutes)
+    }
+});
+
+// Listen for the pairing code
+client.on('code', (code) => {
+    console.log('Pairing code:', code);
+    // Display code to user - they enter it in WhatsApp app
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.initialize();
+```
+
+**Steps to pair:**
+1. Run your script with the phone number configuration
+2. A pairing code (e.g., "ABCD-EFGH") will be displayed
+3. On your phone, open WhatsApp > Linked Devices > Link a Device
+4. Tap "Link with phone number instead"
+5. Enter the pairing code
+
+See [phone-pairing-example.js](phone-pairing-example.js) for a complete example.
+
 ## Docker Support
 
 Run whatsapp-web.js in a Docker container for easy deployment and isolation.

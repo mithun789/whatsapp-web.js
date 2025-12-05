@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Non-root user for enhanced security
   - `docker-example.js` - Complete Docker-ready bot example
   - `.dockerignore` for optimized builds
+- **Phone Number Pairing Example**: Added `phone-pairing-example.js` demonstrating how to authenticate using phone number and pairing code instead of QR code scanning
+  - Interactive phone number input
+  - Formatted pairing code display
+  - Step-by-step instructions for users
 
 ## [1.36.0] - 2025-12-05
 

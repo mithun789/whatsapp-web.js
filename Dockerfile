@@ -59,6 +59,7 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/index.js ./
 COPY --from=builder /app/index.d.ts ./
 COPY --from=builder /app/docker-example.js ./
+COPY --from=builder /app/phone-pairing-example.js ./
 
 # Create directories for auth and cache with proper permissions
 RUN mkdir -p /app/.wwebjs_auth /app/.wwebjs_cache \
