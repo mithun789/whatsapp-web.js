@@ -1,0 +1,70 @@
+# Docker ignore file for WhatsApp Web.js
+# Excludes files that should not be copied to the Docker image
+
+# Git
+.git
+.gitignore
+
+# Dependencies (will be installed fresh in container)
+node_modules
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Development files
+.editorconfig
+.eslintrc.json
+.jsdoc.json
+.npmignore
+.env
+.env.*
+!.env.example
+
+# Tests
+tests
+*.test.js
+*.spec.js
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session data (will be mounted as volumes)
+.wwebjs_auth
+.wwebjs_cache
+*session.json
+
+# Build artifacts
+dist
+build
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Docker files (no need to copy these into the image)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# GitHub
+.github
+
+# Shell and tools
+shell.js
+tools
+
+# Lock files (npm ci will use package-lock.json if present)
+yarn.lock
+pnpm-lock.yaml

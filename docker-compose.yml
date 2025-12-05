@@ -1,0 +1,64 @@
+# Docker Compose configuration for WhatsApp Web.js
+# This provides an easy way to run WhatsApp Web.js in a container
+
+version: '3.8'
+
+services:
+  whatsapp-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp-web-js
+    restart: unless-stopped
+    
+    # Volumes for persistent authentication and cache
+    volumes:
+      # Persist WhatsApp session data
+      - wwebjs_auth:/app/.wwebjs_auth
+      # Persist web version cache
+      - wwebjs_cache:/app/.wwebjs_cache
+      # Mount your bot script (optional - uncomment and modify path)
+      # - ./your-bot.js:/app/bot.js:ro
+    
+    # Environment variables
+    environment:
+      - NODE_ENV=production
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      # Add your custom environment variables here
+      # - WEBHOOK_URL=https://your-webhook-url.com
+    
+    # Security options for Chromium
+    security_opt:
+      - seccomp:unconfined
+    
+    # Shared memory size (important for Chromium)
+    shm_size: '2gb'
+    
+    # Resource limits (adjust as needed)
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    
+    # Basic health check - verifies Node.js is running
+    # For WhatsApp connection status, implement a health endpoint in your bot
+    # Example: Create an HTTP server that returns client.info when connected
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Override default command to run your bot
+    command: ["node", "docker-example.js"]
+
+# Named volumes for persistence
+volumes:
+  wwebjs_auth:
+    driver: local
+  wwebjs_cache:
+    driver: local
