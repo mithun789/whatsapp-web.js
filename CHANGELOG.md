@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0] - 2025-12-05
+
+### Added
+- **RateLimiter**: Token bucket rate limiter for API calls to prevent hitting WhatsApp rate limits
+- **MessageScheduler**: Schedule messages to be sent at a specific future time with events for sent/failed/cancelled
+- **RetryHandler**: Enhanced error handling with exponential backoff and configurable retry logic
+- **WebhookManager**: Send events to external HTTP endpoints with signature verification support
+- **MessageQueue**: Priority-based message queue with concurrency control for bulk messaging
+- **Logger**: Comprehensive logging system with multiple levels, transports, and log history
+
 ## [1.35.0] - 2025-12-05
 
 ### Changed

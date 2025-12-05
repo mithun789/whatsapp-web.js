@@ -2243,6 +2243,390 @@ declare namespace WAWebJS {
         hasReactionByMe: boolean,
         senders: Array<Reaction>
     }
+
+    /** Rate limiter options */
+    export interface RateLimiterOptions {
+        /** Maximum requests allowed in the time window (default: 30) */
+        maxRequests?: number
+        /** Time window in milliseconds (default: 60000) */
+        windowMs?: number
+        /** Minimum delay between requests in milliseconds (default: 100) */
+        minDelayMs?: number
+    }
+
+    /** Rate limiter status */
+    export interface RateLimiterStatus {
+        availableTokens: number
+        maxTokens: number
+        queueLength: number
+        windowMs: number
+    }
+
+    /**
+     * Rate limiter for API calls to prevent hitting WhatsApp rate limits
+     * Uses token bucket algorithm for flexible rate limiting
+     */
+    export class RateLimiter {
+        constructor(options?: RateLimiterOptions)
+        
+        /** Check if a request can be made immediately */
+        canMakeRequest(): boolean
+        
+        /** Get the wait time until a request can be made */
+        getWaitTime(): number
+        
+        /** Consume a token for making a request */
+        consumeToken(): boolean
+        
+        /** Wait for rate limit and then execute the function */
+        execute<T>(fn: () => Promise<T>): Promise<T>
+        
+        /** Get current rate limiter status */
+        getStatus(): RateLimiterStatus
+        
+        /** Reset the rate limiter */
+        reset(): void
+    }
+
+    /** Scheduled message object */
+    export interface ScheduledMessage {
+        id: string
+        chatId: string
+        content: any
+        options: object
+        sendAt: Date
+        createdAt: Date
+        status: 'scheduled' | 'sent' | 'failed' | 'cancelled'
+        sentAt?: Date
+        messageId?: string
+        error?: string
+    }
+
+    /**
+     * Message scheduler for scheduling messages to be sent at a specific time
+     */
+    export class MessageScheduler extends EventEmitter {
+        constructor(client: Client)
+        
+        /** Schedule a message to be sent at a specific time */
+        schedule(chatId: string, content: any, sendAt: Date, options?: object): string
+        
+        /** Cancel a scheduled message */
+        cancel(id: string): boolean
+        
+        /** Reschedule a message to a new time */
+        reschedule(id: string, newSendAt: Date): boolean
+        
+        /** Get all scheduled messages */
+        getAll(status?: string): ScheduledMessage[]
+        
+        /** Get a specific scheduled message */
+        get(id: string): ScheduledMessage | null
+        
+        /** Clear all scheduled messages */
+        clear(cancelPending?: boolean): void
+
+        on(event: 'scheduled', listener: (scheduledMessage: ScheduledMessage) => void): this
+        on(event: 'sent', listener: (scheduledMessage: ScheduledMessage, message: Message) => void): this
+        on(event: 'failed', listener: (scheduledMessage: ScheduledMessage, error: Error) => void): this
+        on(event: 'cancelled', listener: (scheduledMessage: ScheduledMessage) => void): this
+        on(event: 'rescheduled', listener: (scheduledMessage: ScheduledMessage) => void): this
+        on(event: 'cleared', listener: () => void): this
+    }
+
+    /** Retry handler options */
+    export interface RetryHandlerOptions {
+        /** Maximum number of retries (default: 3) */
+        maxRetries?: number
+        /** Base delay between retries in milliseconds (default: 1000) */
+        baseDelayMs?: number
+        /** Maximum delay between retries (default: 30000) */
+        maxDelayMs?: number
+        /** Use exponential backoff (default: true) */
+        exponentialBackoff?: boolean
+        /** List of error types that should trigger a retry */
+        retryableErrors?: string[]
+    }
+
+    /** Retry statistics */
+    export interface RetryStats {
+        totalAttempts: number
+        successfulAttempts: number
+        failedAttempts: number
+        retriedAttempts: number
+        successRate: string
+    }
+
+    /**
+     * Enhanced error handler with retry logic for API operations
+     */
+    export class RetryHandler extends EventEmitter {
+        constructor(options?: RetryHandlerOptions)
+        
+        /** Execute a function with retry logic */
+        execute<T>(fn: () => Promise<T>, context?: object): Promise<T>
+        
+        /** Get retry statistics */
+        getStats(): RetryStats
+        
+        /** Reset statistics */
+        resetStats(): void
+        
+        /** Add a retryable error type */
+        addRetryableError(errorType: string): void
+        
+        /** Remove a retryable error type */
+        removeRetryableError(errorType: string): void
+
+        on(event: 'error', listener: (error: Error, info: object) => void): this
+        on(event: 'retry', listener: (info: object) => void): this
+        on(event: 'retrySuccess', listener: (info: object) => void): this
+    }
+
+    /** Webhook configuration */
+    export interface WebhookConfig {
+        id: string
+        url: string
+        events: string[]
+        headers?: object
+        secret?: string | null
+        enabled: boolean
+        createdAt: Date
+        stats: { sent: number; successful: number; failed: number }
+    }
+
+    /** Webhook manager options */
+    export interface WebhookManagerOptions {
+        /** Request timeout in milliseconds (default: 10000) */
+        timeoutMs?: number
+        /** Maximum retry attempts for failed webhooks (default: 3) */
+        maxRetries?: number
+        /** Whether webhooks are enabled (default: true) */
+        enabled?: boolean
+    }
+
+    /** Webhook registration options */
+    export interface WebhookRegisterOptions {
+        /** Custom headers to include */
+        headers?: object
+        /** Secret for signing payloads */
+        secret?: string
+    }
+
+    /**
+     * Webhook manager for sending events to external endpoints
+     */
+    export class WebhookManager extends EventEmitter {
+        constructor(options?: WebhookManagerOptions)
+        
+        /** Register a webhook for specific events */
+        register(id: string, url: string, events: string[], options?: WebhookRegisterOptions): WebhookConfig
+        
+        /** Unregister a webhook */
+        unregister(id: string): boolean
+        
+        /** Enable or disable a specific webhook */
+        setEnabled(id: string, enabled: boolean): boolean
+        
+        /** Trigger webhooks for a specific event */
+        trigger(eventName: string, data: object): Promise<object[]>
+        
+        /** Get all registered webhooks */
+        getAll(): WebhookConfig[]
+        
+        /** Get a specific webhook */
+        get(id: string): WebhookConfig | null
+        
+        /** Get webhook statistics */
+        getStats(): object
+        
+        /** Clear all webhooks */
+        clear(): void
+
+        on(event: 'registered', listener: (webhook: WebhookConfig) => void): this
+        on(event: 'unregistered', listener: (webhook: WebhookConfig) => void): this
+        on(event: 'sent', listener: (info: object) => void): this
+        on(event: 'failed', listener: (info: object) => void): this
+        on(event: 'cleared', listener: () => void): this
+    }
+
+    /** Message queue item */
+    export interface QueueItem {
+        id: string
+        chatId: string
+        content: any
+        sendOptions: object
+        priority: number
+        status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
+        createdAt: Date
+        attempts: number
+        startedAt?: Date
+        completedAt?: Date
+        failedAt?: Date
+        messageId?: string
+        error?: string
+    }
+
+    /** Message queue options */
+    export interface MessageQueueOptions {
+        /** Number of concurrent message sends (default: 1) */
+        concurrency?: number
+        /** Delay between messages in milliseconds (default: 500) */
+        delayBetweenMs?: number
+        /** Maximum queue size (default: 1000) */
+        maxQueueSize?: number
+        /** Auto-start processing (default: true) */
+        autoStart?: boolean
+    }
+
+    /** Queue enqueue options */
+    export interface EnqueueOptions {
+        /** Priority (1-10, 1 is highest) */
+        priority?: number
+        /** Options passed to sendMessage */
+        sendOptions?: object
+    }
+
+    /** Queue status */
+    export interface QueueStatus {
+        pending: number
+        processing: number
+        paused: boolean
+        stats: { enqueued: number; processed: number; successful: number; failed: number }
+    }
+
+    /**
+     * Message queue for managing message sending with priority and persistence
+     */
+    export class MessageQueue extends EventEmitter {
+        constructor(client: Client, options?: MessageQueueOptions)
+        
+        /** Add a message to the queue */
+        enqueue(chatId: string, content: any, options?: EnqueueOptions): string
+        
+        /** Remove a message from the queue */
+        dequeue(id: string): boolean
+        
+        /** Start processing the queue */
+        start(): void
+        
+        /** Pause queue processing */
+        pause(): void
+        
+        /** Resume queue processing */
+        resume(): void
+        
+        /** Clear all pending messages from the queue */
+        clear(): void
+        
+        /** Get queue status */
+        getStatus(): QueueStatus
+        
+        /** Get all items in the queue */
+        getAll(status?: string): QueueItem[]
+        
+        /** Get a specific queue item */
+        get(id: string): QueueItem | null
+
+        on(event: 'enqueued', listener: (item: QueueItem) => void): this
+        on(event: 'dequeued', listener: (item: QueueItem) => void): this
+        on(event: 'success', listener: (item: QueueItem, message: Message) => void): this
+        on(event: 'failed', listener: (item: QueueItem, error: Error) => void): this
+        on(event: 'paused', listener: () => void): this
+        on(event: 'resumed', listener: () => void): this
+        on(event: 'cleared', listener: (count: number) => void): this
+        on(event: 'processing_started', listener: () => void): this
+        on(event: 'processing_stopped', listener: () => void): this
+    }
+
+    /** Log levels */
+    export enum LogLevel {
+        DEBUG = 0,
+        INFO = 1,
+        WARN = 2,
+        ERROR = 3,
+        NONE = 4
+    }
+
+    /** Log entry */
+    export interface LogEntry {
+        level: number
+        levelName: string
+        message: string
+        args: any[]
+        timestamp: Date
+        prefix: string
+    }
+
+    /** Logger options */
+    export interface LoggerOptions {
+        /** Log prefix (default: 'WWebJS') */
+        prefix?: string
+        /** Minimum log level (default: LogLevel.INFO) */
+        level?: LogLevel
+        /** Include timestamps in logs (default: true) */
+        timestamps?: boolean
+        /** Use colors in console output (default: true) */
+        colors?: boolean
+        /** Custom log formatter function */
+        customFormatter?: (entry: LogEntry) => string
+        /** Custom log transports */
+        transports?: object[]
+        /** Maximum history size (default: 1000) */
+        maxHistorySize?: number
+    }
+
+    /** Logger history options */
+    export interface LogHistoryOptions {
+        /** Filter by minimum level */
+        level?: LogLevel
+        /** Limit number of entries */
+        limit?: number
+        /** Filter entries since date */
+        since?: Date
+    }
+
+    /**
+     * Enhanced logging system for the WhatsApp client
+     */
+    export class Logger extends EventEmitter {
+        /** Log levels enumeration */
+        static LogLevel: typeof LogLevel
+        
+        constructor(options?: LoggerOptions)
+        
+        /** Log a debug message */
+        debug(message: string, ...args: any[]): void
+        
+        /** Log an info message */
+        info(message: string, ...args: any[]): void
+        
+        /** Log a warning message */
+        warn(message: string, ...args: any[]): void
+        
+        /** Log an error message */
+        error(message: string, ...args: any[]): void
+        
+        /** Get log history */
+        getHistory(options?: LogHistoryOptions): LogEntry[]
+        
+        /** Clear log history */
+        clearHistory(): void
+        
+        /** Set log level */
+        setLevel(level: LogLevel): void
+        
+        /** Add a custom transport */
+        addTransport(transport: object): void
+        
+        /** Remove a transport */
+        removeTransport(transport: object): boolean
+        
+        /** Create a child logger with a different prefix */
+        child(prefix: string): Logger
+
+        on(event: 'log', listener: (entry: LogEntry) => void): this
+    }
 }
 
 export = WAWebJS

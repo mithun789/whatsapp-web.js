@@ -30,6 +30,14 @@ module.exports = {
     NoAuth: require('./src/authStrategies/NoAuth'),
     LocalAuth: require('./src/authStrategies/LocalAuth'),
     RemoteAuth: require('./src/authStrategies/RemoteAuth'),
+
+    // Utilities
+    RateLimiter: require('./src/util/RateLimiter'),
+    MessageScheduler: require('./src/util/MessageScheduler'),
+    RetryHandler: require('./src/util/RetryHandler'),
+    WebhookManager: require('./src/util/WebhookManager'),
+    MessageQueue: require('./src/util/MessageQueue'),
+    Logger: require('./src/util/Logger'),
     
     ...Constants
 };
