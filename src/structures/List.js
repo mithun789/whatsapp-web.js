@@ -5,7 +5,7 @@ const Util = require('../util/Util');
 /**
  * Message type List
  * @deprecated Lists are no longer supported by WhatsApp. This class is kept for backwards compatibility but will not work.
- * @see https://www.youtube.com/watch?v=hv1R1rLeVVE for more information
+ * @see https://wwebjs.dev/guide/creating-your-bot/sending-messages.html for more information
  */
 class List {
     /**
@@ -17,7 +17,7 @@ class List {
      * @deprecated Lists are no longer supported by WhatsApp.
      */
     constructor(body, buttonText, sections, title, footer) {
-        console.warn('[DEPRECATED] Lists are no longer supported by WhatsApp. See https://www.youtube.com/watch?v=hv1R1rLeVVE');
+        console.warn('[DEPRECATED] Lists are no longer supported by WhatsApp. This feature was removed by WhatsApp and will not work.');
         
         /**
          * Message body
