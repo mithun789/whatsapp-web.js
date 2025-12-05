@@ -19,6 +19,8 @@ const Util = require('../util/Util');
 
 /**
  * Message type buttons
+ * @deprecated Buttons are no longer supported by WhatsApp. This class is kept for backwards compatibility but will not work.
+ * @see https://www.youtube.com/watch?v=hv1R1rLeVVE for more information
  */
 class Buttons {
     /**
@@ -26,8 +28,11 @@ class Buttons {
      * @param {ButtonSpec[]} buttons - See {@link ButtonSpec}
      * @param {string?} title
      * @param {string?} footer
+     * @deprecated Buttons are no longer supported by WhatsApp.
      */
     constructor(body, buttons, title, footer) {
+        console.warn('[DEPRECATED] Buttons are no longer supported by WhatsApp. See https://www.youtube.com/watch?v=hv1R1rLeVVE');
+        
         /**
          * Message body
          * @type {string|MessageMedia}

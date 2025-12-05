@@ -4,6 +4,8 @@ const Util = require('../util/Util');
 
 /**
  * Message type List
+ * @deprecated Lists are no longer supported by WhatsApp. This class is kept for backwards compatibility but will not work.
+ * @see https://www.youtube.com/watch?v=hv1R1rLeVVE for more information
  */
 class List {
     /**
@@ -12,8 +14,11 @@ class List {
      * @param {Array<any>} sections
      * @param {string?} title
      * @param {string?} footer
+     * @deprecated Lists are no longer supported by WhatsApp.
      */
     constructor(body, buttonText, sections, title, footer) {
+        console.warn('[DEPRECATED] Lists are no longer supported by WhatsApp. See https://www.youtube.com/watch?v=hv1R1rLeVVE');
+        
         /**
          * Message body
          * @type {string}

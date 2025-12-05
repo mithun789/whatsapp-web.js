@@ -6,8 +6,9 @@
     <br />
     <p>
 		<a href="https://www.npmjs.com/package/whatsapp-web.js"><img src="https://img.shields.io/npm/v/whatsapp-web.js.svg" alt="npm" /></a>
-        <a href="https://depfu.com/github/pedroslopez/whatsapp-web.js?project_id=9765"><img src="https://badges.depfu.com/badges/4a65a0de96ece65fdf39e294e0c8dcba/overview.svg" alt="Depfu" /></a>
-        <img src="https://img.shields.io/badge/WhatsApp_Web-2.3000.1017054665-brightgreen.svg" alt="WhatsApp_Web 2.2346.52" />
+        <img src="https://img.shields.io/badge/WhatsApp_Web-2.3000.1017054665-brightgreen.svg" alt="WhatsApp_Web 2.3000.1017054665" />
+        <img src="https://img.shields.io/badge/Node.js-%3E%3D20.0.0-brightgreen.svg" alt="Node.js >=20.0.0" />
+        <img src="https://img.shields.io/badge/Puppeteer-v24.6.0-blue.svg" alt="Puppeteer v24.6.0" />
         <a href="https://discord.gg/H7DqQs4"><img src="https://img.shields.io/discord/698610475432411196.svg?logo=discord" alt="Discord server" /></a>
 	</p>
     <br />
@@ -34,7 +35,7 @@ The library launches the WhatsApp Web browser app via Puppeteer, accessing its i
 The module is available on [npm][npm] via `npm i whatsapp-web.js`!
 
 > [!NOTE]
-> **Node ``v18`` or higher, is required.**  
+> **Node ``v20`` or higher is required.**  
 > See the [Guide][guide] for quick upgrade instructions.
 
 ## Example usage
