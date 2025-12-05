@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.0] - 2025-12-05
+
+### Added
+- **Docker Support**: Full Docker and Docker Compose support for containerized deployments
+  - Multi-stage Dockerfile with optimized production image
+  - Docker Compose configuration with persistent volumes
+  - Pre-configured Chromium with all required dependencies
+  - Non-root user for enhanced security
+  - `docker-example.js` - Complete Docker-ready bot example
+  - `.dockerignore` for optimized builds
+
 ## [1.36.0] - 2025-12-05
 
 ### Added

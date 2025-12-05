@@ -9,6 +9,7 @@
         <img src="https://img.shields.io/badge/WhatsApp_Web-2.3000.1017054665-brightgreen.svg" alt="WhatsApp_Web 2.3000.1017054665" />
         <img src="https://img.shields.io/badge/Node.js-%3E%3D20.0.0-brightgreen.svg" alt="Node.js >=20.0.0" />
         <img src="https://img.shields.io/badge/Puppeteer-v24.6.0-blue.svg" alt="Puppeteer v24.6.0" />
+        <img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker Ready" />
         <a href="https://discord.gg/H7DqQs4"><img src="https://img.shields.io/discord/698610475432411196.svg?logo=discord" alt="Discord server" /></a>
 	</p>
     <br />
@@ -65,6 +66,53 @@ client.initialize();
 
 Take a look at [example.js][examples] for another examples with additional use cases.  
 For further details on saving and restoring sessions, explore the provided [Authentication Strategies][auth-strategies].
+
+## Docker Support
+
+Run whatsapp-web.js in a Docker container for easy deployment and isolation.
+
+### Quick Start with Docker
+
+```bash
+# Build the Docker image
+docker build -t whatsapp-web-js .
+
+# Run the container
+docker run -it --shm-size=2gb \
+  -v wwebjs_auth:/app/.wwebjs_auth \
+  -v wwebjs_cache:/app/.wwebjs_cache \
+  whatsapp-web-js node docker-example.js
+```
+
+### Using Docker Compose
+
+```bash
+# Start the bot
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the bot
+docker-compose down
+```
+
+### Docker Configuration
+
+The included `Dockerfile` provides:
+- Multi-stage build for optimized image size
+- Pre-installed Chromium with all dependencies
+- Non-root user for security
+- Persistent volumes for authentication data
+
+For custom bots, mount your script and update the command:
+```yaml
+volumes:
+  - ./my-bot.js:/app/bot.js:ro
+command: ["node", "bot.js"]
+```
+
+See [docker-example.js](docker-example.js) for a complete Docker-ready bot example.
 
 
 ## Supported features
